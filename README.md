@@ -1,4 +1,8 @@
-# Prime-Run-Selector
+<img src="https://user-images.githubusercontent.com/127943536/232760188-d89640a5-d313-4392-b9dd-00f6b0dd7ab9.png" alt="logo" align="left" height="100"/>
+
+# Prime-Run-Selector <br> ![version badge](https://img.shields.io/badge/latest--release-v1.0-blue)
+
+
 A program suitable for laptops with dedicated graphics to run applications more easily with the prime-run command
 When you want to use your laptop's dedicated graphics, 
 you may have to use the Prime Run command over and 
