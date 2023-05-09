@@ -12,9 +12,9 @@ programs installed on the system, has the ability to run
 your chosen executable files to save your time and also
 you can change run mode applications to dGPU or iGPU.
 
-to add an executable file to File > Add Executable File
+to add an executable file to File -> Add Executable File
 
-and to change run mode Setting > Modes
+and to change run mode Setting -> Modes
 
 # Libraries
 * [GTK Gio](https://docs.gtk.org/gio/iface.AppInfo.html)
