@@ -12,9 +12,24 @@ programs installed on the system, has the ability to run
 your chosen executable files to save your time and also
 you can change run mode applications to dGPU or iGPU.
 
-to add an executable file to File -> Add Executable File
+| Path | Description |
+|-----------------|-------------|
+| `File => Add Executable File`       | to add an Executable File |
+| `Setting => Mode`       | to change Run Mode Setting |
 
-and to change run mode Setting -> Modes
+# Installation
+
+```python
+git clone 
+cd Prime-Run-Selector-GUI
+python pip install -r requirements.txt
+python install.py
+```
+and also for uninstall:
+```python
+python uninstall.py
+```
+
 
 # Libraries
 * [GTK Gio](https://docs.gtk.org/gio/iface.AppInfo.html)
