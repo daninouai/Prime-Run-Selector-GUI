@@ -22,7 +22,7 @@ you can change run mode applications to dGPU or iGPU.
 ```python
 git clone 
 cd Prime-Run-Selector-GUI
-python pip install -r requirements.txt
+pip install -r requirements.txt
 python install.py
 ```
 and also for uninstall:
