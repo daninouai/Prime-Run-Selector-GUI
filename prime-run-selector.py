@@ -3,9 +3,12 @@ import subprocess
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QSettings, QCoreApplication
 from gi.repository import Gio
+import PyQt5.QtGui as QtGui
+import os
 
 all_apps = []
 search_res = []
+current_dir = os.getcwd()
 
 
 class Ui_MainWindow(object):
@@ -31,16 +34,20 @@ class Ui_MainWindow(object):
         self.buttonBox.accepted.connect(self.start_app)
         self.buttonBox.rejected.connect(self.exit_app)
         self.buttonBox.setObjectName("buttonBox")
+        self.buttonBox.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.searchbar = QtWidgets.QLineEdit(self.centralwidget)
+        self.searchbar.returnPressed.connect(self.search_list)
         self.searchbar.setGeometry(QtCore.QRect(10, 20, 301, 32))
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton.setGeometry(QtCore.QRect(320, 20, 81, 31))
         self.pushButton.setObjectName("pushButton")
         self.pushButton.clicked.connect(self.search_list)
+        self.pushButton.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_2.setGeometry(QtCore.QRect(410, 20, 81, 31))
         self.pushButton_2.setObjectName("pushButton_2")
         self.pushButton_2.clicked.connect(self.reset)
+        self.pushButton_2.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.listWidget = QtWidgets.QListWidget(self.centralwidget)
         self.listWidget.setGeometry(QtCore.QRect(10, 60, 481, 341))
         self.listWidget.setObjectName("listWidget")
@@ -83,17 +90,17 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Prime Run Selector"))
-        MainWindow.setWindowIcon(QtGui.QIcon('./icon.png'))
+        MainWindow.setWindowIcon(QtGui.QIcon('{}/icon/icon.png'.format(os.path.dirname(__file__))))
         __sortingEnabled = self.listWidget.isSortingEnabled()
         self.listWidget.setSortingEnabled(False)
         self.listWidget.setSortingEnabled(__sortingEnabled)
         self.pushButton.setText(_translate("MainWindow", "Search"))
-        self.pushButton_2.setText(_translate("MainWindow", "Reset"))
+        self.pushButton_2.setText(_translate("MainWindow", "reset"))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.menuSetting.setTitle(_translate("MainWindow", "Setting"))
         self.menuHelp.setTitle(_translate("MainWindow", "Help"))
         self.actionAdd_Executable_File.setText(_translate("MainWindow", "Add Executable File"))
-        self.actionMode.setText(_translate("MainWindow", "Modes..."))
+        self.actionMode.setText(_translate("MainWindow", "Mode..."))
         self.actionAbout_Prime_Selector.setText(_translate("MainWindow", "About Prime Selector"))
 
     def appUi(self, selected_list):
@@ -182,6 +189,7 @@ class Ui_Dialog_add_exe_file(object):
         self.addFileButton = QtWidgets.QPushButton(Dialog)
         self.addFileButton.setGeometry(QtCore.QRect(20, 30, 151, 31))
         self.addFileButton.setObjectName("addFileButton")
+        self.addFileButton.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.addFileButton.clicked.connect(self.add_file)
         self.filesList = QtWidgets.QListWidget(Dialog)
         self.filesList.setGeometry(QtCore.QRect(20, 90, 361, 161))
@@ -192,6 +200,7 @@ class Ui_Dialog_add_exe_file(object):
         self.removeFileButton = QtWidgets.QPushButton(Dialog)
         self.removeFileButton.setGeometry(QtCore.QRect(290, 260, 88, 31))
         self.removeFileButton.setObjectName("removeFileButton")
+        self.removeFileButton.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.removeFileButton.clicked.connect(self.remove_file)
 
         self.retranslateUi(Dialog)
@@ -200,7 +209,7 @@ class Ui_Dialog_add_exe_file(object):
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "Add Executable File"))
+        Dialog.setWindowTitle(_translate("Dialog", "Add File"))
         self.addFileButton.setText(_translate("Dialog", "Add Executable File"))
         __sortingEnabled = self.filesList.isSortingEnabled()
         self.filesList.setSortingEnabled(False)
@@ -212,7 +221,7 @@ class Ui_Dialog_add_exe_file(object):
     def file_manager(self):
         _translate = QtCore.QCoreApplication.translate
         loop = -1
-        with open('executable_files.csv', 'r') as f:
+        with open('{}/executable_files.csv'.format(os.path.dirname(__file__)), 'r') as f:
             data = csv.reader(f)
             for app in data:
                 item = QtWidgets.QListWidgetItem()
@@ -225,7 +234,7 @@ class Ui_Dialog_add_exe_file(object):
     def add_file(self):
         file = QtWidgets.QFileDialog.getOpenFileName(QtWidgets.QDialog(), 'Hey! Select a File')
         if not file[0] == "":
-            with open('executable_files.csv', 'a') as f:
+            with open('{}/executable_files.csv'.format(os.path.dirname(__file__)), 'a') as f:
                 data = csv.DictWriter(f, fieldnames=['path'])
                 data.writerow({'path': file[0]})
             self.repaint_list()
@@ -239,18 +248,18 @@ class Ui_Dialog_add_exe_file(object):
             if state == 2:
                 remove_list.append(item)
 
-        with open('executable_files.csv', 'r') as f:
+        with open('{}/executable_files.csv'.format(os.path.dirname(__file__)), 'r') as f:
             data = csv.reader(f)
             rows = list(data)
             new_rows = [row for index, row in enumerate(rows) if index not in remove_list]
 
-        with open('executable_files.csv', 'w', newline='') as f:
+        with open('{}/executable_files.csv'.format(os.path.dirname(__file__)), 'w', newline='') as f:
             csv_writer = csv.writer(f)
             csv_writer.writerows(new_rows)
         self.repaint_list()
 
     def load_files(self):
-        with open('executable_files.csv', 'r') as f:
+        with open('{}/executable_files.csv'.format(os.path.dirname(__file__)), 'r') as f:
             data = csv.reader(f)
             for file in data:
                 item = {'name': file[0], 'icon': 'configurator', 'command': file[0]}
@@ -280,7 +289,7 @@ class Ui_Dialog_help(object):
         self.label.setFont(font)
         self.label.setObjectName("label")
         self.textEdit = QtWidgets.QTextEdit(Dialog)
-        self.textEdit.setGeometry(QtCore.QRect(20, 50, 361, 240))
+        self.textEdit.setGeometry(QtCore.QRect(20, 50, 361, 221))
         font = QtGui.QFont()
         font.setUnderline(False)
         font.setStrikeOut(False)
@@ -312,10 +321,8 @@ class Ui_Dialog_help(object):
                                          "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">over again, and this may be a bit difficult.</p>\n"
                                          "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Prime Run selector is here, in addition to running the </p>\n"
                                          "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">programs installed on the system, has the ability to run </p>\n"
-                                         "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">your chosen executable files to save your time and also</p>\n"
-                                         "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">you can change run mode applications to dGPU or iGPU.</p>\n"
-                                         "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">to add an executable file to File &gt; Add Executable File</p>\n"
-                                         "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">and to change run mode Setting &gt; Modes...</p>\n"
+                                         "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">your chosen executable files to save your time.</p>\n"
+                                         "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">To add an executable file to File &gt; Add Executable File</p>\n"
                                          "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
                                          "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" color:#0000ff;\">Github: daninouai</span></p>\n"
                                          "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" color:#0000ff;\">Website: danirahimi.ir</span></p></body></html>"))
@@ -347,7 +354,7 @@ class Ui_Dialog_mode(object):
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "Modes"))
+        Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
         if ui.settings.value('gpu_mode') == 'true':
             self.comboBox.setItemText(0, _translate("Dialog", "dGPU"))
             self.comboBox.setItemText(1, _translate("Dialog", "iGPU"))
@@ -360,9 +367,10 @@ class Ui_Dialog_mode(object):
                                          "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
                                          "p, li { white-space: pre-wrap; }\n"
                                          "</style></head><body style=\" font-family:\'Noto Sans\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-                                         "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">dGPU: discrete gpu to best perfomance.</p>\n"
-                                         "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">iGPU: integerated gpu to save power.</p></body></html>"))
+                                         "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">dGPU : discrete gpu to best perfomance.</p>\n"
+                                         "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">iGPU : integerated gpu to save power.</p></body></html>"))
         self.pushButton.setText(_translate("Dialog", "OK"))
+        self.pushButton.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
 
     def change_mode(self):
         _translate = QtCore.QCoreApplication.translate
@@ -371,6 +379,7 @@ class Ui_Dialog_mode(object):
             ui.settings.setValue('gpu_mode', 'false')
         else:
             ui.settings.setValue('gpu_mode', 'true')
+
 
 
 if __name__ == "__main__":
