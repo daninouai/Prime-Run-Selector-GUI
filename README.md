@@ -20,7 +20,7 @@ you can change run mode applications to dGPU or iGPU.
 # Installation
 
 ```python
-git clone 
+git clone https://github.com/daninouai/Prime-Run-Selector-GUI.git
 cd Prime-Run-Selector-GUI
 pip install -r requirements.txt
 python install.py
